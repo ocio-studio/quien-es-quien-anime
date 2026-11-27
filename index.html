@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quién es quién - Anime</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h1>Quién es quién - Anime</h1>
+
+  <div id="inicio">
+    <input id="nombre" placeholder="Tu nombre" maxlength="20">
+    <br><br>
+
+    <label><input type="radio" name="modo" value="general" checked> General (populares)</label>
+    <label><input type="radio" name="modo" value="serie"> Serie:</label>
+    <input id="serie" placeholder="Ej: Naruto">
+    <br><br>
+    <button id="crear">Crear sala</button>
+    <br><br>
+
+    <input id="codigo" placeholder="Código de sala" maxlength="4">
+    <button id="unirse">Unirse</button>
+  </div>
+
+  <div id="sala" style="display:none">
+    <h2>Sala: <span id="codigoSala"></span></h2>
+    <p>Eres: <b id="miId"></b></p>
+    <p id="estado"></p>
+    <ul id="listaJugadores"></ul>
+    <div id="panelElegir" style="display:none">
+      <p><b>Elige tu personaje secreto:</b> haz clic en una tarjeta.</p>
+      <button id="confirmarSecreto">Confirmar personaje secreto</button>
+    </div>
+    <div id="miSecreto" style="display:none"></div>
+    <p id="turno"></p>
+    <div id="chat" style="display:none">
+      <div id="mensajes"></div>
+
+      <div id="panelPregunta" style="display:none">
+        <input id="pregunta" placeholder="Escribe una pregunta de sí/no" maxlength="120">
+        <button id="enviarPregunta">Preguntar</button>
+        <br><br>
+        <button id="btnAdivinar">Quiero adivinar</button>
+      </div>
+
+      <div id="panelAdivinar" style="display:none">
+        <p><b>Haz clic en la tarjeta que crees que es el personaje de tu rival.</b> Si fallas, pierdes.</p>
+        <button id="confirmarAdivinar">Confirmar adivinanza</button>
+        <button id="cancelarAdivinar">Cancelar</button>
+      </div>
+
+      <div id="panelResponder" style="display:none">
+        <p>Responde según tu personaje secreto:</p>
+        <button id="btnSi">Sí</button>
+        <button id="btnNo">No</button>
+      </div>
+    </div>
+
+    <div id="fin" style="display:none">
+      <h2 id="resultado"></h2>
+      <div id="secretos"></div>
+      <br>
+      <button id="revancha">Revancha (misma sala)</button>
+      <button id="jugarOtra">Jugar otra vez</button>
+    </div>
+
+    <h3 id="tituloTablero"></h3>
+    <p id="contador"></p>
+    <div id="grid"></div>
+  </div>
+
+  <p id="mensaje" style="color:red"></p>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
