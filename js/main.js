@@ -19,3 +19,7 @@ $("unirse").addEventListener("click", unirseASala);
 
 const sesion = leerSesion();
 if (sesion) reconectar(sesion.codigo, sesion.miId);
+
+$("serie").addEventListener("focus", () => {
+  document.querySelector('input[name="modo"][value="serie"]').checked = true;
+});
