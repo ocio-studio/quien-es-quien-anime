@@ -1,6 +1,6 @@
 import { db, ref, get, update, query, orderByValue, endAt, limitToFirst, obtenerUid } from "./firebase.js";
 
-const HORAS = 24;
+const HORAS = 10;
 
 export async function limpiarSalasAntiguas() {
   try {
