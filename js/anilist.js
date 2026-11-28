@@ -13,6 +13,23 @@ async function consultar(query, variables) {
 
 const aPersonaje = (c) => ({ id: c.id, nombre: c.name.full, imagen: c.image.large });
 
+// Sugerencias mientras se escribe
+export async function buscarSeries(texto) {
+  const data = await consultar(
+    `query($search:String){ Page(page:1, perPage:6){
+        media(search:$search, type:ANIME, isAdult:false, sort:SEARCH_MATCH){
+          id title{ romaji english } seasonYear
+        }
+    } }`,
+    { search: texto }
+  );
+  return data.Page.media.map((m) => {
+    const ingles = m.title.english && m.title.english !== m.title.romaji ? m.title.english : "";
+    const extra = [ingles, m.seasonYear].filter(Boolean).join(" · ");
+    return { id: m.id, titulo: m.title.romaji, extra };
+  });
+}
+
 export async function personajesGeneral() {
   const pagina = Math.floor(Math.random() * 10) + 1;
   const data = await consultar(
@@ -24,17 +41,18 @@ export async function personajesGeneral() {
     .map(aPersonaje);
 }
 
-export async function personajesSerie(nombreSerie) {
+export async function personajesSerie(nombreSerie, idSerie) {
+  const variables = idSerie ? { id: idSerie } : { search: nombreSerie };
   let data;
   try {
     data = await consultar(
-      `query($search:String){ Media(search:$search, type:ANIME, isAdult:false){
+      `query($id:Int, $search:String){ Media(id:$id, search:$search, type:ANIME, isAdult:false){
           title{ romaji }
           characters(sort:FAVOURITES_DESC, perPage:50){
             edges{ role node{ id name{full} image{large} } }
           }
       } }`,
-      { search: nombreSerie }
+      variables
     );
   } catch (e) {
     throw new Error("No encontré esa serie. Prueba con otro nombre.");
