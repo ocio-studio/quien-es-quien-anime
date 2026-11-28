@@ -3,6 +3,7 @@ import { $, mostrarError } from "./utils.js";
 import { activarModoElegir, obtenerSeleccionado } from "./tablero.js";
 
 let adivinando = false;
+let faseActual = null;
 
 export function configurarChat(codigo, miId) {
   const base = `salas/${codigo}`;
@@ -60,6 +61,13 @@ export function configurarChat(codigo, miId) {
   $("confirmarAdivinar").addEventListener("click", async () => {
     const p = obtenerSeleccionado();
     if (!p) return mostrarError("Haz clic en la tarjeta que crees que es el personaje de tu rival.");
+
+    if (faseActual !== "preguntar") {
+      adivinando = false;
+      activarModoElegir(false);
+      $("panelAdivinar").style.display = "none";
+      return mostrarError("Tu rival ya intentó adivinar.");
+    }
     mostrarError("");
 
     $("confirmarAdivinar").disabled = true;
@@ -77,34 +85,48 @@ export function configurarChat(codigo, miId) {
 }
 
 export function actualizarChat(sala, miId) {
-  $("chat").style.display = "block";
+  const voz = sala.modo === "voz";
+  faseActual = sala.fase;
 
-  const lista = Object.values(sala.mensajes || {}).sort((a, b) => a.hora - b.hora);
+  $("chat").style.display = voz && sala.fase === "fin" ? "none" : "block";
+
   const caja = $("mensajes");
-  caja.innerHTML = "";
-  lista.forEach((m) => {
-    const p = document.createElement("p");
-    const quien = m.de === miId ? "Tú" : sala.jugadores[m.de].nombre;
-    if (m.tipo === "pregunta") p.textContent = `${quien} pregunta: ${m.texto}`;
-    if (m.tipo === "respuesta") p.textContent = `${quien} responde: ${m.texto}`;
-    if (m.tipo === "adivinanza") p.textContent = `${quien} intenta adivinar: ${m.texto}`;
-    p.className = m.tipo;
-    caja.appendChild(p);
-  });
-  caja.scrollTop = caja.scrollHeight;
+  caja.style.display = voz ? "none" : "";
+  if (!voz) {
+    const lista = Object.values(sala.mensajes || {}).sort((a, b) => a.hora - b.hora);
+    caja.innerHTML = "";
+    lista.forEach((m) => {
+      const p = document.createElement("p");
+      const quien = m.de === miId ? "Tú" : sala.jugadores[m.de].nombre;
+      if (m.tipo === "pregunta") p.textContent = `${quien} pregunta: ${m.texto}`;
+      if (m.tipo === "respuesta") p.textContent = `${quien} responde: ${m.texto}`;
+      if (m.tipo === "adivinanza") p.textContent = `${quien} intenta adivinar: ${m.texto}`;
+      p.className = m.tipo;
+      caja.appendChild(p);
+    });
+    caja.scrollTop = caja.scrollHeight;
+  }
+
+  $("filaPregunta").style.display = voz ? "none" : "";
+  $("panelVoz").style.display = voz && sala.fase !== "fin" ? "block" : "none";
 
   const miTurno = sala.turno === miId;
-  const puedoPreguntar = miTurno && sala.fase === "preguntar";
-  const puedoResponder = !miTurno && sala.fase === "responder";
+  const puedoPreguntar = voz ? sala.fase === "preguntar" : miTurno && sala.fase === "preguntar";
+  const puedoResponder = !voz && !miTurno && sala.fase === "responder";
 
-  if (!puedoPreguntar) adivinando = false;
+  if (!puedoPreguntar && adivinando) {
+    adivinando = false;
+    activarModoElegir(false);
+  }
 
   $("panelPregunta").style.display = puedoPreguntar && !adivinando ? "block" : "none";
   $("panelAdivinar").style.display = puedoPreguntar && adivinando ? "block" : "none";
   $("panelResponder").style.display = puedoResponder ? "block" : "none";
 
-  if (puedoPreguntar) $("enviarPregunta").disabled = false;
-  if (puedoPreguntar) $("confirmarAdivinar").disabled = false;
+  if (puedoPreguntar) {
+    $("enviarPregunta").disabled = false;
+    $("confirmarAdivinar").disabled = false;
+  }
   if (puedoResponder) {
     $("btnSi").disabled = false;
     $("btnNo").disabled = false;
