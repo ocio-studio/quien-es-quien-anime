@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Quién es quién - Anime</title>
+  <title>Quién es quién</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -13,9 +13,17 @@
     <input id="nombre" placeholder="Tu nombre" maxlength="20">
     <br><br>
 
+    <p><b>Modo de juego:</b></p>
+    <label><input type="radio" name="modoJuego" value="turnos" checked> Por turnos (chat)</label>
+    <label><input type="radio" name="modoJuego" value="voz"> Voz libre (sin turnos)</label>
+    <br><br>
+
     <label><input type="radio" name="modo" value="general" checked> General (populares)</label>
     <label><input type="radio" name="modo" value="serie"> Serie:</label>
-    <input id="serie" placeholder="Ej: Naruto">
+    <div class="auto">
+      <input id="serie" placeholder="Ej: Naruto" autocomplete="off">
+      <div id="sugerencias" class="sugerencias"></div>
+    </div>
     <br><br>
     <button id="crear">Crear sala</button>
     <br><br>
@@ -27,6 +35,7 @@
   <div id="sala" style="display:none">
     <h2>Sala: <span id="codigoSala"></span></h2>
     <p>Eres: <b id="miId"></b></p>
+    <p>Modo: <b id="modoSala"></b></p>
     <p id="estado"></p>
     <ul id="listaJugadores"></ul>
     <div id="panelElegir" style="display:none">
@@ -35,13 +44,29 @@
     </div>
     <div id="miSecreto" style="display:none"></div>
     <p id="turno"></p>
+    <div id="barraVoz" style="display:none">
+      <button id="btnActivarVoz">🎙️ Activar voz</button>
+      <div id="controlesVoz" style="display:none">
+        <button id="btnMic">🎙️ Micrófono: encendido</button>
+        <label>🔊 Volumen del rival <input id="volumen" type="range" min="0" max="100" value="100"></label>
+        <button id="btnReintentarVoz" style="display:none">Reintentar</button>
+      </div>
+      <p id="estadoVoz">La voz es opcional. Si no conecta, hablen por Discord o Meet.</p>
+      <audio id="audioRival" autoplay playsinline></audio>
+    </div>
     <div id="chat" style="display:none">
       <div id="mensajes"></div>
 
+      <div id="panelVoz" style="display:none">
+        <p>🎙️ <b>Voz libre:</b> pregunten hablando, sin turnos. Pulsa «Quiero adivinar» cuando creas saber.</p>
+      </div>
+
       <div id="panelPregunta" style="display:none">
-        <input id="pregunta" placeholder="Escribe una pregunta de sí/no" maxlength="120">
-        <button id="enviarPregunta">Preguntar</button>
-        <br><br>
+        <div id="filaPregunta">
+          <input id="pregunta" placeholder="Escribe una pregunta de sí/no" maxlength="120">
+          <button id="enviarPregunta">Preguntar</button>
+          <br><br>
+        </div>
         <button id="btnAdivinar">Quiero adivinar</button>
       </div>
 
@@ -61,9 +86,27 @@
     <div id="fin" style="display:none">
       <h2 id="resultado"></h2>
       <div id="secretos"></div>
+      <p id="avisoRival" style="color:#c60"></p>
       <br>
-      <button id="revancha">Revancha (misma sala)</button>
-      <button id="jugarOtra">Jugar otra vez</button>
+
+      <div id="botonesFin">
+        <button id="revancha">Revancha (mismo tablero)</button>
+        <button id="btnNuevaRonda">Nueva ronda</button>
+        <button id="salir">Salir</button>
+      </div>
+
+      <div id="panelNueva" style="display:none">
+        <p><b>Tablero de la nueva ronda:</b></p>
+        <label><input type="radio" name="modoNueva" value="general" checked> General (populares)</label>
+        <label><input type="radio" name="modoNueva" value="serie"> Serie:</label>
+        <div class="auto">
+          <input id="serieNueva" placeholder="Ej: Naruto" autocomplete="off">
+          <div id="sugerenciasNueva" class="sugerencias"></div>
+        </div>
+        <br><br>
+        <button id="confirmarNueva">Empezar nueva ronda</button>
+        <button id="cancelarNueva">Cancelar</button>
+      </div>
     </div>
 
     <h3 id="tituloTablero"></h3>
