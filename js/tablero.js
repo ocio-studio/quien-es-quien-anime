@@ -41,10 +41,9 @@ export function obtenerSeleccionado() {
 
 export function reiniciarTablero() {
   descartados.clear();
-  document.querySelectorAll(".carta").forEach((c) => c.classList.remove("volteada", "seleccionada"));
   if (claveGuardado) sessionStorage.removeItem(claveGuardado);
   seleccionado = null;
-  actualizarContador();
+  dibujado = false;
 }
 
 export function mostrarTablero(personajes) {
